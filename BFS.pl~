@@ -1,0 +1,41 @@
+% Sample graph representation
+edge(a, b, 2).
+edge(a, c, 1).
+edge(b, d, 5).
+edge(b, e, 2).
+edge(c, f, 4).
+edge(c, g, 3).
+
+% Heuristic values for each node
+heuristic(a, 5).
+heuristic(b, 4).
+heuristic(c, 3).
+heuristic(d, 2).
+heuristic(e, 3).
+heuristic(f, 2).
+heuristic(g, 1).
+
+% Best First Search algorithm
+best_first_search(Start, Goal, Path) :-
+    bfs([(Start, [])], Goal, Path).
+
+% Base case: if the current node is the goal, return the path
+bfs([(Node, Path)|_], Node, Path).
+
+% Recursive case: explore the neighbors of the current node
+bfs([(Node, Path)|Rest], Goal, FinalPath) :-
+    findall((Neighbor, [Node|Path]),
+            (edge(Node, Neighbor, _), \+ member(Neighbor, Path)),
+            Neighbors),
+    append(Rest, Neighbors, Queue),
+    sort_queue(Queue, SortedQueue),
+    bfs(SortedQueue, Goal, FinalPath).
+
+% Sort the queue based on heuristic values
+sort_queue(Queue, SortedQueue) :-
+    predsort(compare_nodes, Queue, SortedQueue).
+
+compare_nodes(Order, (Node1, _), (Node2, _)) :-
+    heuristic(Node1, H1),
+    heuristic(Node2, H2),
+    compare(Order, H1, H2).Best_First_Search
